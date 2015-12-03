@@ -1,5 +1,4 @@
 #include <stdio.h>
-#define INF 800000000000
 #define false 0
 #define true 1
 
