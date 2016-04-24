@@ -1,9 +1,4 @@
-	#include <bits/stdc++.h>
-
-/*
-	Créé par Gustavo Cavalcante, Université de Brasilia.
-	exercice nombre 1928 URI.
-*/
+#include <bits/stdc++.h>
 
 #define MAX 50005
 
