@@ -107,7 +107,7 @@ int main(){
 		for ( int i = 1; i <= n; i++ ){
 
 			if ( !visited[i] and p_aux[i] == -1 ){
-					dfs(v, i, 1);
+				dfs(v, i, 1);
 			}
 		}
 
