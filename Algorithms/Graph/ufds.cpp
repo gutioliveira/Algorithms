@@ -1,5 +1,3 @@
-#include <bits/stdc++.h>
-
 using namespace std;
 
 using vi = vector<int>;
@@ -36,8 +34,3 @@ public:
 
     int count() const { return m_count; }
 };
-
-int main(){
-	
-	return 0;
-}
