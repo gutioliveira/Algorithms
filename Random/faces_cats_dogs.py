@@ -74,7 +74,6 @@ def detect(frame):
     miniframe = cv2.resize(frame, minisize)
     faces = classifier.detectMultiScale(miniframe)
     if len(faces)>0:
-        # print 'face detected!'
         for i in faces:
             x, y, w, h = [ v*DOWNSCALE for v in i ]
 
@@ -106,9 +105,6 @@ def get_image_camera():
 	    ret, frame = cap.read()
 	    img = frame.copy()
 	    # Call the function
-	    # frame = detect(frame)
-
-	    # Display the resulting frame
 	    cv2.imshow('frame',frame)
 	    if cv2.waitKey(1) & 0xFF == ord('q'):
 	    	cap.release()#cv2.destroyAllWindows()
@@ -130,11 +126,8 @@ def probability(image):
 
 	### perform classification
 	output = net.forward()
-	# print output
 
 	output_prob = output['prob'][0]  # the output probability vector for the first image in the batch
-
-	# print 'predicted class is:', output_prob.argmax()
 
 	labels_file = os.path.join(caffe_root, 'data','ilsvrc12','synset_words.txt')
 	    
@@ -190,62 +183,110 @@ def probability(image):
 	print 'Probable synset:', labels[output_prob.argmax()]
 	print 'Probability: ' + str(output_prob[output_prob.argmax()] * 100.0) + "%"
 
+	return output_prob[output_prob.argmax()] * 100.0
+
+def plot_image(image):
+
+	plt.imshow(image[:,:,::-1])
+	plt.title('Detection result')
+	plt.axis('off')
+	return plt.show()
+
+
+def recognition_image():
+
+	image_name = raw_input('enter file name:\n')
+
+	image = cv2.VideoCapture(image_name)
+	ret, img = image.read()
+
+	image_recognition = caffe.io.load_image(image_name)
+
+	probability(image_recognition)
+	image_detected = detect(img)
+
+	plot_image(image_detected)
+
+def recognition_url():
+	image_url = raw_input('enter the image url:\n')
+	image = get_image_url(image_url)
+
+	urllib.urlretrieve(image_url, os.path.join(caffe_root, 'examples', 'images','url.jpg'))
+	image_recognition = caffe.io.load_image(os.path.join(caffe_root, 'examples', 'images','url.jpg'))
+
+	probability(image_recognition)
+	image_detected = detect(image)
+
+	plot_image(image_detected)
+
+def recogniton_camera():
+
+	frame = get_image_camera()
+	image_recognition = caffe.io.load_image(os.path.join(caffe_root, 'examples', 'images','frame.jpg'))
+	probability(image_recognition)
+	image_detected = detect(frame)
+
+	plot_image(image_detected)
+
+import unittest
+
+class Test_Faces_Cats_Dogs(unittest.TestCase):
+
+	def test_get_image_url(self):
+
+		image = get_image_url('http://cdn2.tudosobrecachorros.com.br/wp-content/uploads/2013/02/pastor_alemao_2.jpg');
+
+		self.assertIsNotNone(image)
+
+	def test_get_image_url_none(self):
+
+		image = get_image_url('');
+
+		self.assertIsNone(image)
+
+	def test_recognition_image(self):
+
+		image = caffe.io.load_image(os.path.join(caffe_root, 'test', 'images','test.jpg'))
+
+		self.assertIsNotNone(image)
+
+	def test_recognition_url(self):
+
+		get_image_url('http://cdn2.tudosobrecachorros.com.br/wp-content/uploads/2013/02/pastor_alemao_2.jpg');
+
+		image = caffe.io.load_image(os.path.join(caffe_root, 'examples', 'images','url.jpg'))
+
+		self.assertIsNotNone(image)
+
+	def test_probability(self):
+
+		image = caffe.io.load_image(os.path.join(caffe_root, 'test', 'images','test.jpg'))
+
+		prob = probability(image)
+
+		self.assertTrue(prob > 90.0)
+
 
 if __name__ == '__main__':
+
+	unittest.main()
 	
 	while True:
 		option = options()
 
 
 		if option == 1:
-			print '1'
-
-			image_name = raw_input('enter file name:\n')
-
-			image = cv2.VideoCapture(image_name)
-			ret, img = image.read()
-
-			# detect(img)
-
-			image_recognition = caffe.io.load_image(image_name)
-
-
-			probability(image_recognition)
-			image_detected = detect(img)
-
-			plt.imshow(image_detected[:,:,::-1])
-			plt.title('Detection result')
-			plt.axis('off')
-			plt.show()
-
+			
+			recognition_image()
+			
 		elif option == 2:
 			
-			image_url = raw_input('enter the image url:\n')
-			image = get_image_url(image_url)
-
-			urllib.urlretrieve(image_url, os.path.join(caffe_root, 'examples', 'images','url.jpg'))
-			image_recognition = caffe.io.load_image(os.path.join(caffe_root, 'examples', 'images','url.jpg'))
-			# print image
-
-			probability(image_recognition)
-			image_detected = detect(image)
-
-			plt.imshow(image_detected[:,:,::-1])
-			plt.title('Detection result')
-			plt.axis('off')
-			plt.show()
+			recognition_url()
 
 
 		elif option == 3:
-			frame = get_image_camera()
-			image_recognition = caffe.io.load_image(os.path.join(caffe_root, 'examples', 'images','frame.jpg'))
-			probability(image_recognition)
-			image_detected = detect(frame)
 
-			plt.imshow(image_detected[:,:,::-1])
-			plt.title('Detection result')
-			plt.axis('off')
-			plt.show()
+			recognition_camera()
 
 
 		elif option == 4:
