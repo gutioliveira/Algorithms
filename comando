@@ -1,0 +1,5 @@
+docker run -ti -e DISPLAY=$DISPLAY -v /run/user/$UID/pulse/native:/home/developer/socket --name fgame -v /tmp/.X11-unix:/tmp/.X11-unix fgametest /bin/bash
+
+xhost +
+
+docker run --rm -ti -e DISPLAY=$DISPLAY -v /run/user/$UID/pulse/native:/home/developer/socket --name noisbruxao -v /tmp/.X11-unix:/tmp/.X11-unix 769b07ea4785 /bin/bash

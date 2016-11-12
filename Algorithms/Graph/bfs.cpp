@@ -41,9 +41,5 @@ int bfs(int origin, int destination){
 
 int main(){
 
-	memset( visited , 0 , sizeof visited );
-
-	memset( dist , 0 , sizeof dist );
-
 	return 0;
 }
